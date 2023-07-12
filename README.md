@@ -22,3 +22,13 @@ We assume that you follow the installation instructions above.
 1. Open the notebook: `jupyter-lab semantec-encodings.ipynb` or
    `jupyter-notebook semantec-encodings.ipynb`
 2. Select the kernel: `Kernel -> Change kernel -> semantic-encodings`
+
+## Uninstall
+
+If you need to uninstall this dir and all libraries installed in the virtual
+environment, simply remove `semantic-encodings` (If you have followed the
+installation the virtual env directory is inside `semantic-encodings`).
+
+More over you need to remove the kernel installed. Run the command `python -m
+ipykernel install --user --name=semantic-encodings` again and then delete
+the directory that appears in the output.
