@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -9,8 +10,8 @@ def hierarchy_to_lca(hierarchy: np.ndarray) -> np.ndarray:
     the level of the least common ancestor for classes i and j.
 
     Args:
-        hierarchy (np.array or torch.Tensor): A matrix where each row represents
-            the ancestor hierarchy of a class.
+        hierarchy (np.array): A matrix where each row represents the ancestor
+            hierarchy of a class.
 
     Returns:
         A square numpy array containing the LCA matrix.
@@ -37,8 +38,8 @@ def lca_to_hierarchy(lca: np.ndarray) -> np.ndarray:
     of a class.
 
     Args:
-        lca (np.array or torch.Tensor): A square matrix where each element (i, j)
-            represents the level of the least common ancestor for classes i and j.
+        lca (np.array): A square matrix where each element (i, j) represents
+            the level of the least common ancestor for classes i and j.
 
     Returns:
         A numpy array containing the hierarchy matrix.
@@ -70,3 +71,34 @@ def lca_to_hierarchy(lca: np.ndarray) -> np.ndarray:
         lca[lca == level] += 1
 
     return hierarchy
+
+
+def plot_enc(encodings: np.ndarray, hierarchy: np.ndarray | None = None) -> None:
+    """
+    Plots the encoding matrix with optional hierarchical sorting.
+
+    Args:
+        encodings (np.ndarray): The encoding matrix to be plotted.
+        hierarchy (np.ndarray | None): A hierarchy matrix representing the
+            ancestor hierarchy of the classes. If provided, the encodings will
+            be sorted according to the hierarchy before plotting. Default is None.
+
+    Returns:
+        None
+    """
+    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(3, 3))
+
+    if hierarchy is not None:
+        # Use hierarchy to sort encoding
+        idx = np.lexsort(hierarchy)
+        encodings = encodings[idx, :][:, idx]
+
+        # Rearrange ticks according to the hierarchical sorting
+        ticks = np.arange(len(hierarchy[0]))
+        ax.set_xticks(ticks[::20])
+        ax.set_yticks(ticks[::20])
+        ax.set_xticklabels(labels=idx[::20])
+        ax.set_yticklabels(labels=idx[::20])
+
+    ax.imshow(encodings)
+    fig.show()
