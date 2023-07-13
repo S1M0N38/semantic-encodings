@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 # HIERARCHY ############################################################################
 
@@ -107,6 +108,41 @@ def plot_enc(encodings: np.ndarray, hierarchy: np.ndarray | None = None) -> None
 
     ax.imshow(encodings)
     fig.show()
+
+
+def plot_error_rate_hier_dist_mistake(df: pd.DataFrame) -> None:
+    """
+    Plots the error rate vs hierarchical distance mistake metrics as scatter plot for
+    different levels of hierarchy.
+
+    Args:
+        df (pd.DataFrame): A DataFrame containing the metrics for different levels
+            of hierarchy. The DataFrame should have a multi-level column index with the
+            first level representing the hierarchy level and the second level
+            representing the metrics. The rows are various experiments.
+
+    Returns:
+        None
+    """
+    fig, axs = plt.subplots(nrows=1, ncols=4, figsize=(12, 3))
+
+    for lvl, ax in enumerate(axs):
+        ax.set_title(f"Level {lvl}")
+        for exp, metrics in df.loc[:, pd.IndexSlice[lvl, :]].iterrows():
+            ax.scatter(*metrics, label=exp)
+
+    fig.tight_layout()
+
+    handles, labels = ax.get_legend_handles_labels()
+    fig.legend(
+        loc="lower center",
+        handles=handles,
+        labels=labels,
+        bbox_to_anchor=(0.5, -0.2),
+        ncol=4,
+    )
+
+    plt.show()
 
 
 # METRICS ##############################################################################
