@@ -1,5 +1,6 @@
 ipykernel
 matplotlib
+pandas
 scikit-learn
 torch
 torchvision
