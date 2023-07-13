@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+# HIERARCHY ############################################################################
+
 
 def hierarchy_to_lca(hierarchy: np.ndarray) -> np.ndarray:
     """
@@ -73,6 +75,9 @@ def lca_to_hierarchy(lca: np.ndarray) -> np.ndarray:
     return hierarchy
 
 
+# PLOTS ################################################################################
+
+
 def plot_enc(encodings: np.ndarray, hierarchy: np.ndarray | None = None) -> None:
     """
     Plots the encoding matrix with optional hierarchical sorting.
@@ -102,3 +107,69 @@ def plot_enc(encodings: np.ndarray, hierarchy: np.ndarray | None = None) -> None
 
     ax.imshow(encodings)
     fig.show()
+
+
+# METRICS ##############################################################################
+
+
+def accuracy(
+    predictions: np.ndarray,
+    labels: np.ndarray,
+    hierarchy: np.ndarray,
+    level: int = 0,
+    k: int = 1,
+) -> float:
+    top_k_preds = np.argsort(predictions, axis=1)[:, -k:]
+    labels = labels.reshape(-1, 1)
+    corrects = np.any(
+        hierarchy[level][top_k_preds] == hierarchy[level][labels],
+        axis=1,
+    )
+    return np.mean(corrects)
+
+
+def error_rate(
+    predictions: np.ndarray,
+    labels: np.ndarray,
+    hierarchy: np.ndarray,
+    level: int = 0,
+    k: int = 1,
+) -> float:
+    top_k_preds = np.argsort(predictions, axis=1)[:, -k:]
+    labels = labels.reshape(-1, 1)
+    wrongs = np.all(
+        hierarchy[level][top_k_preds] != hierarchy[level][labels],
+        axis=1,
+    )
+    return np.mean(wrongs)
+
+
+def hier_dist_mistake(
+    predictions: np.ndarray,
+    labels: np.ndarray,
+    hierarchy: np.ndarray,
+    level: int = 0,
+    k: int = 1,
+) -> float:
+    top_k_preds = np.argsort(predictions, axis=1)[:, -k:]
+    labels = labels.reshape(-1, 1)
+    wrongs = np.all(
+        hierarchy[level][top_k_preds] != hierarchy[level][labels],
+        axis=1,
+    )
+    lca = hierarchy_to_lca(hierarchy[level:])
+    lca_heights = lca[top_k_preds[wrongs], labels[wrongs]]
+    return np.mean(lca_heights)
+
+
+def hier_dist(
+    predictions: np.ndarray,
+    labels: np.ndarray,
+    hierarchy: np.ndarray,
+    level: int = 0,
+    k: int = 1,
+) -> float:
+    top_k_preds = np.argsort(predictions, axis=1)[:, -k:]
+    labels = labels.reshape(-1, 1)
+    lca_heights = hierarchy_to_lca(hierarchy[level:])[top_k_preds, labels]
+    return np.mean(lca_heights)
